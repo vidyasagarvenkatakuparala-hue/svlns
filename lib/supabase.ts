@@ -3,21 +3,9 @@ import { createClient } from "@supabase/supabase-js"
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-let supabaseInstance: ReturnType<typeof createClient> | null = null
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export const supabase = (() => {
-  if (typeof window === "undefined") {
-    // Server-side: create new instance each time
-    return createClient(supabaseUrl, supabaseAnonKey)
-  }
-  // Client-side: use singleton
-  if (!supabaseInstance) {
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey)
-  }
-  return supabaseInstance
-})()
-
-// Database types - consistent with database schema
+// Updated database types - consistent with database schema
 export interface Author {
   id: string
   first_name: string
@@ -89,7 +77,9 @@ export interface Issue {
   is_special_issue: boolean
   special_issue_theme?: string
   cover_image_url?: string
+  issue.pdf_url?: string
   pdf_url?: string
+  cover_image_url?: string 
   status: "draft" | "published" | "archived"
   article_count: number
   total_pages?: string
@@ -120,7 +110,7 @@ export interface EditorialBoardMember {
   email?: string
   bio?: string
   expertise_areas?: string[]
-  profile_url?: string
+  profile_url?: string   // ✅ New field for profile link
   is_active?: boolean
   order_position?: number
   created_at: string
@@ -180,29 +170,6 @@ export interface Submission {
   pdf_url?: string
   year: number
   status: "submitted" | "under_review" | "accepted" | "rejected"
-  created_at: string
-  updated_at: string
-}
-
-export interface AdminUser {
-  id: string
-  user_id: string
-  email: string
-  role: "admin" | "editor" | "reviewer"
-  first_name?: string
-  last_name?: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface GithubLink {
-  id: string
-  entity_type: "article" | "issue" | "submission"
-  entity_id: string
-  github_url: string
-  file_type: string
-  is_primary: boolean
   created_at: string
   updated_at: string
 }
